@@ -1,0 +1,15 @@
+request/requestcreator/JsonRequestCreator$7.class
+request/requestcreator/JsonRequestCreator$8.class
+request/impl/ExpensesPutRequestImpl.class
+request/requestcreator/JsonRequestCreator$3.class
+request/impl/CreateUserRequest.class
+request/requestcreator/JsonRequestCreator$4.class
+request/requestcreator/JsonRequestCreator.class
+request/impl/DeleteRequestImpl.class
+request/impl/TemperaturePutRequestImpl.class
+request/requestcreator/JsonRequestCreator$2.class
+request/impl/GetDataRequestImpl.class
+request/requestcreator/JsonRequestCreator$5.class
+request/requestcreator/JsonRequestCreator$6.class
+request/impl/UnknownOperationRequest.class
+request/requestcreator/JsonRequestCreator$1.class

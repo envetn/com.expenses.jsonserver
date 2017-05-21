@@ -1,0 +1,26 @@
+@startuml
+title Expense Get/Remove request flow
+
+Class01 <|-- Class02
+ServerThread -> RequestHandler: HandleRequest
+RequestHandler -> JsonDecoder: ParseAndValidate
+JsonDecoder --> JsonDecoder: validateRequestParameters
+JsonDecoder -> DatabaseHandler: validateUser
+DatabaseHandler --> DatabaseHandler: createUserQuery
+DatabaseHandler -> Database: ExecuteUserQuery
+Database -> DatabaseHandler: userExists
+DatabaseHandler -> JsonDecoder: UserOk
+
+JsonDecoder -> RequestHandler: request
+
+RequestHandler -> DatabaseHandler: ExecuteRequest(request)
+DatabaseHandler --> DatabaseHandler: createQuery
+DatabaseHandler -> Database: ExecuteQuery
+Database -> DatabaseHandler: queryResult
+DatabaseHandler -> JsonDecoder: ParseResponse
+JsonDecoder -> DatabaseHandler: Response
+DatabaseHandler -> RequestHandler: Response
+RequestHandler -> ServerThread: Response
+
+
+@enduml

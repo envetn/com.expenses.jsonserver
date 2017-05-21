@@ -1,0 +1,20 @@
+@startuml
+title Temperature request flow
+
+ServerThread -> RequestHandler: HandleRequest
+RequestHandler -> JsonDecoder: ParseAndValidate
+JsonDecoder --> JsonDecoder: validateRequestParameters
+
+JsonDecoder -> RequestHandler: request
+
+RequestHandler -> DatabaseHandler: ExecuteRequest(request)
+DatabaseHandler --> DatabaseHandler: createQuery
+DatabaseHandler -> Database: ExecuteQuery
+Database -> DatabaseHandler: queryResult
+DatabaseHandler -> JsonDecoder: ParseResponse
+JsonDecoder -> DatabaseHandler: Response
+DatabaseHandler -> RequestHandler: Response
+RequestHandler -> ServerThread: Response
+
+
+@enduml

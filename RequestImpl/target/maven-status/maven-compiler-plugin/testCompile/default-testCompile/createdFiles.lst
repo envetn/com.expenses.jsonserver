@@ -1,0 +1,7 @@
+request/requestcreator/TestJsonRequestCreator.class
+request/impl/TestJsonPrettyPrinter.class
+request/impl/TestGetDataRequest.class
+request/impl/TestPutDataRequest.class
+request/impl/TestCreateTemperaturePutRequest.class
+request/impl/TestCreateUserRequest.class
+request/impl/TestDeleteRequest.class
