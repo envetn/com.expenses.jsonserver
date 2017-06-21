@@ -83,6 +83,20 @@ public class DatabaseConnection implements DbView
     }
 
     @Override
+    public UserContainer createUserContainer(Request request) throws SQLException
+    {
+        openConnection();
+        List<Threshold> thresholds = readThresholdValue(request);
+        List<Expenses> expenses = readExpensesValue(request);
+        List<Temperature> temperature = readTemperatureValue(request);
+
+        closeConnection();
+        return new UserContainer(request, expenses, thresholds, temperature);
+    }
+
+
+
+    @Override
     public ImmutableList<ExpenseUser> getCachedUsers()
     {
         return ImmutableList.copyOf(myExistingUsers);
@@ -106,6 +120,21 @@ public class DatabaseConnection implements DbView
             loadedUsers.add(user);
         }
         return ImmutableList.copyOf(loadedUsers);
+    }
+
+    @Override
+    public JsonObject readFromContainer(UserContainer container)
+    {
+        Request request = container.getRequest();
+        RequestId id = request.getId();
+
+        if(id.equals(EXPENSES.getId()))
+        {
+            ExpensesDbConnection expensesDbConnection = new ExpensesDbConnection((GetRequest)request, container.getExpenses(), container.getThresholds());
+            expensesDbConnection.createExpensesResponse();
+        }
+
+
     }
 
     public int createUser(Request createUserRequest) throws SQLException
@@ -236,6 +265,7 @@ public class DatabaseConnection implements DbView
         return affectedRows;
     }
 
+    //old
     public JsonArray readthresholdValue(GetRequest request) throws SQLException
     {
         Fetchperiod fetchperiod = request.getLimit().getFetchperiod();
@@ -290,41 +320,98 @@ public class DatabaseConnection implements DbView
             jsonArray.add(object);
         }
 
-
         return jsonArray;
     }
 
-    private class Threshold
+
+
+    private List<Temperature> readTemperatureValue(Request request) throws SQLException
     {
-        final int myCurrentValue;
-        final int myThresholdValue;
-        final String myType;
-        final int myMonth;
+//        String query = "SELECT * FROM test.temperature WHERE username=?";
+//
+//        preparedStatement = connect.prepareStatement(query);
+//        preparedStatement.setString(1, request.getUser().getUsername());
+//
+//        logger.info("Statement: " + preparedStatement.toString());
+//        resultSet = preparedStatement.executeQuery();
+//
+//        List<Temperature> listOfTemperature= new ArrayList<>();
+//
+//        while (resultSet.next())
+//        {
+//            JsonObject object = new JsonObject();
+//            String date = resultSet.getString("date");
+//            String temperatur = resultSet.getString("temperatur");
+//            Date time =  Date.valueOf(resultSet.getString("time"));
+//            Temperature temperature = new Temperature(date, temperatur, time);
+//
+//            listOfTemperature.add(temperature);
+//
+//
+//        }
+//        return listOfTemperature;
+        return Collections.emptyList();
 
-        public Threshold(int currentValue, int thresholdValue, int month, String type)
+    }
+
+
+    //new
+    private List<Expenses> readExpensesValue(Request request) throws SQLException
+    {
+        String query = "SELECT * FROM test.expenses WHERE username=?";
+
+        preparedStatement = connect.prepareStatement(query);
+        preparedStatement.setString(1, request.getUser().getUsername());
+
+        logger.info("Statement: " + preparedStatement.toString());
+        resultSet = preparedStatement.executeQuery();
+
+        List<Expenses> listOfExpenses= new ArrayList<>();
+
+        while (resultSet.next())
         {
-            myCurrentValue = currentValue;
-            myThresholdValue = thresholdValue;
-            myType = type;
-            myMonth = month;
-        }
+            JsonObject object = new JsonObject();
+            String cost = resultSet.getString("cost");
+            String costType = resultSet.getString("costType");
+            Date buyDate =  Date.valueOf(resultSet.getString("buyDate"));
+            String comment =  resultSet.getString("comment");
+            String uuid =  resultSet.getString("uuid");
 
-        private boolean evaluate()
+            Expenses expenses = new Expenses(cost, costType, buyDate, comment, uuid);
+
+            listOfExpenses.add(expenses);
+
+
+        }
+        return listOfExpenses;
+    }
+
+    //new
+    private List<Threshold> readThresholdValue(Request request) throws SQLException
+    {
+        StringBuilder quierBuilder = new StringBuilder();
+        quierBuilder.append("SELECT * FROM test.threshold WHERE username=?");
+
+        String query = quierBuilder.toString();
+
+        preparedStatement = connect.prepareStatement(query);
+        preparedStatement.setString(1, request.getUser().getUsername());
+
+        logger.info("Statement: " + preparedStatement.toString());
+        resultSet = preparedStatement.executeQuery();
+
+        List<Threshold> thresholds = new ArrayList<>();
+
+        while (resultSet.next())
         {
-            return myCurrentValue > myThresholdValue;
-        }
+            int currentValue = resultSet.getInt("currentCost");
+            int threshold = resultSet.getInt("threshold");
 
-        public JsonObject createObject()
-        {
-            JsonObject thresholdObject = new JsonObject();
-            thresholdObject.addProperty("month", myMonth);
-            thresholdObject.addProperty("type", myType);
-
-            thresholdObject.addProperty("thresholdValue", myThresholdValue);
-            thresholdObject.addProperty("currentValue", myCurrentValue);
-            thresholdObject.addProperty("hasPassed", evaluate());
-            return thresholdObject;
+            String type = resultSet.getString("type");
+            int momnth = resultSet.getInt("month");
+            thresholds.add(new Threshold(currentValue, threshold, momnth, type));
         }
+        return thresholds;
     }
 
     /**

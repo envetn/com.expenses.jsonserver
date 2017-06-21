@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuite tests="3" failures="0" name="jsonserver.common.datatype.TestFetchPeriod" time="0.047" errors="0" skipped="0">
+<testsuite tests="3" failures="0" name="jsonserver.common.datatype.TestFetchPeriod" time="0.061" errors="0" skipped="0">
   <properties>
     <property name="java.runtime.name" value="OpenJDK Runtime Environment"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-8-openjdk-amd64/jre/lib/amd64"/>
@@ -32,7 +32,7 @@
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.class.version" value="52.0"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
-    <property name="os.version" value="4.8.0-49-generic"/>
+    <property name="os.version" value="4.8.0-54-generic"/>
     <property name="library.jansi.path" value="/home/lofie/software/apache-maven-3.5.0/lib/jansi-native/linux64"/>
     <property name="user.home" value="/home/lofie"/>
     <property name="user.timezone" value="Europe/Stockholm"/>
@@ -62,7 +62,7 @@
     <property name="sun.desktop" value="gnome"/>
     <property name="sun.cpu.isalist" value=""/>
   </properties>
-  <testcase classname="jsonserver.common.datatype.TestFetchPeriod" name="testCreateMonthPeriod" time="0.047"/>
+  <testcase classname="jsonserver.common.datatype.TestFetchPeriod" name="testCreateMonthPeriod" time="0.061"/>
   <testcase classname="jsonserver.common.datatype.TestFetchPeriod" name="testCreateDayPeriod" time="0"/>
   <testcase classname="jsonserver.common.datatype.TestFetchPeriod" name="testCreateAllPeriod" time="0"/>
 </testsuite>

@@ -2,6 +2,8 @@ package server;
 
 import Connection.DatabaseConnection;
 import cache.MemoryCache;
+import jsonserver.common.datatype.RequestId;
+import jsonserver.common.datatype.UserContainer;
 import request.requestcreator.JsonRequestCreator;
 import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonElement;
@@ -32,6 +34,7 @@ public class RequestHandler
      * Cache for already parsed jsonRequests
      */
     private static final MemoryCache<Integer, CachedRequest> REQUEST_CACHE = new MemoryCache<>();
+    private static final MemoryCache<String, UserContainer> USER_CONTAINER_MEMORY_CACHE = new MemoryCache<>();
 
     private static final Logger logger = Logger.getLogger(RequestHandler.class);
     private static DbView myDatabaseView = null;
@@ -45,22 +48,13 @@ public class RequestHandler
         }
     }
 
-    private JsonObject validateJsonAndPrint(String request)
-    {
-        JsonParser parser = new JsonParser();
-        JsonElement JsonElement = parser.parse(request);
-        JsonObject jsonObject = JsonElement.getAsJsonObject();
 
-        String prettyJsonString = Utilities.getPrettyJsonString(jsonObject);
-        logger.info("Received request: " + prettyJsonString);
-        return jsonObject;
-    }
-
-    public CachedRequest generateRequest(String strRequest)
+    public UserContainer generateRequest(String strRequest)
     {
         CachedRequest cachedRequest = getFromMemoryCache(strRequest);
+        UserContainer userContainer = USER_CONTAINER_MEMORY_CACHE.get("UserName");
 
-        if (cachedRequest == null)
+        if (userContainer == null)
         {
             try
             {
@@ -69,21 +63,40 @@ public class RequestHandler
                 logger.info("Generated request: " + request);
                 cachedRequest = new CachedRequest(request, jsonRequestCreator);
                 storeInMemoryCache(strRequest, cachedRequest);
-                return cachedRequest;
 
-            } catch (Exception e)
+                //If I keep this one updated. I can use it in the cache. :)
+                userContainer = createUserContainer(cachedRequest);
+
+            }
+            catch (Exception e)
             {
                 e.printStackTrace();
                 logger.error("Failed to create request: " + e.toString());
                 return null;
             }
-        } else
+        }
+        else
         {
             logger.info("Request cache was used to fetch: " + cachedRequest);
         }
 
-        return cachedRequest;
 
+
+        return userContainer;
+//        return cachedRequest;
+    }
+
+    private UserContainer createUserContainer(CachedRequest cachedRequest)
+    {
+        try
+        {
+            return myDatabaseView.createUserContainer(cachedRequest.getRequest());
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     private JsonRequestCreator validateRequestAndGetCreator(String request)
@@ -102,12 +115,29 @@ public class RequestHandler
         return JsonRequestCreator.getRequestCreatorByName(requestName);
     }
 
-    /**
-     * @param generatedRequest
-     * @return
-     */
-    public synchronized JsonObject executeRequest(CachedRequest generatedRequest)
+    private JsonObject validateJsonAndPrint(String request)
     {
+        JsonParser parser = new JsonParser();
+        JsonElement JsonElement = parser.parse(request);
+        JsonObject jsonObject = JsonElement.getAsJsonObject();
+
+        String prettyJsonString = Utilities.getPrettyJsonString(jsonObject);
+        logger.info("Received request: " + prettyJsonString);
+        return jsonObject;
+    }
+
+
+    public synchronized JsonObject executeRequest(UserContainer container)
+    {
+        String type = container.getRequest().getRequestType();
+        if(type.equals("Get"))
+        {
+            JsonObject jsonResponse = myDatabaseView.readFromContainer(container);
+        }
+
+
+
+
         JsonObject response;
         if (validateRequest(generatedRequest.getRequest()))
         {

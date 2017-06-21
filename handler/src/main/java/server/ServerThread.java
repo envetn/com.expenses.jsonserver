@@ -3,6 +3,7 @@ package server;
 
 import jsonserver.common.Utils.Utilities;
 import com.google.gson.JsonObject;
+import jsonserver.common.datatype.UserContainer;
 import org.apache.log4j.Logger;
 import jsonserver.common.view.Request;
 import server.internal.CachedRequest;
@@ -122,8 +123,8 @@ public class ServerThread implements Runnable
 
     private JsonObject handleReceivedMessage(String messageFromClient)
     {
-        CachedRequest request = HANDLER.generateRequest(messageFromClient);
+        UserContainer container = HANDLER.generateRequest(messageFromClient);
         logger.info("Executing request towards database");
-        return HANDLER.executeRequest(request);
+        return HANDLER.executeRequest(container);
     }
 }

@@ -15,6 +15,8 @@ public interface Request
 
     Date getRequestDate();
 
+    String getRequestType();
+
     boolean isValid();
 
     ExpenseUser getUser();

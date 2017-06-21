@@ -72,6 +72,12 @@ public class GetDataRequestImpl implements GetRequest//, UserRequest
     }
 
     @Override
+    public String getRequestType()
+    {
+        return requestType;
+    }
+
+    @Override
     public ExpenseUser getUser()
     {
         return user;

@@ -1,7 +1,9 @@
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Validation/Validation.java
+/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Temperature.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/Utils/Utilities.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/json/JsonResponseHandler.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Fetchperiod.java
+/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Threshold.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/Utils/CertificateService.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Content.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/RequestLimit.java
@@ -10,10 +12,12 @@
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/view/Expense/ExpensePutRequest.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/view/Temperature/TemperaturePutRequest.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/ExpenseUser.java
+/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/UserContainer.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/view/Request.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Validation/ValidationUtil.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/RequestId.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/json/JsonDecoder.java
+/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Expenses.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Limit.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/view/DbView.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/common/src/main/java/jsonserver/common/datatype/Order.java
