@@ -1,18 +1,18 @@
-#other
-#*.bluej
-#*.jar
-#*.txt
-#*.xml
+other
+*.bluej
+*.jar
+*.txt
+*.xml
 
-#/target/**
+/target/**
 
-#eclipse files
-#.classpath
-#.project
-#.settings/*
+eclipse files
+.classpath
+.project
+.settings/*
 
-#intellij
-#.idea/*
-#*.iml
+intellij
+.idea/*
+*.iml
 
 
