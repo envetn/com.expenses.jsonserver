@@ -1,4 +1,3 @@
-import org.apache.log4j.BasicConfigurator;
 import org.apache.log4j.Logger;
 import server.ServerRunner;
 
@@ -31,7 +30,7 @@ public class StartServer
         }
         //mySocketServer = new Server(PORT);
 
-        ServerRunner runner = new ServerRunner(isSecure, PORT);
+        ServerRunner runner = new ServerRunner(isSecure, true,  PORT);
         boolean hasRegistered = runner.registerService();
 
         if (hasRegistered)

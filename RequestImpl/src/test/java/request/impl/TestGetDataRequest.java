@@ -1,5 +1,6 @@
 package request.impl;
 
+import jsonserver.common.Utils.DateUtils;
 import jsonserver.common.Utils.Utilities;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -33,7 +34,7 @@ public class TestGetDataRequest
         GetDataRequestImpl testJson = new GetDataRequestImpl(new RequestId("test"),
                 "Get",
                 order,
-                Utilities.getFirstDayOfMonthInSql(),
+                DateUtils.getFirstDayOfMonthInSql(),
                 limit,
                 user);
 

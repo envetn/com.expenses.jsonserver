@@ -1,7 +1,6 @@
 package Connection;
 
 import jsonserver.common.datatype.RequestId;
-import jsonserver.common.datatype.RequestId.ValidRequestIdEnum;
 
 import java.util.Collections;
 import java.util.HashMap;

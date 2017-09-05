@@ -1,6 +1,5 @@
 package request.requestcreator;
 
-import com.google.gson.JsonObject;
 import jsonserver.common.view.DeleteRequest;
 import jsonserver.common.view.Expense.ExpensePutRequest;
 import jsonserver.common.view.GetRequest;
@@ -12,7 +11,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import request.impl.*;
 
 import java.io.IOException;
@@ -25,7 +23,7 @@ import static org.mockito.Mockito.mock;
  * Created by Foten on 4/23/2017.
  */
 @RunWith(JUnitParamsRunner.class)
-public class TestJsonRequestCreator
+public class TestJsonRequestFactory
 {
     private static final String USER_PUT = "User-Put";
     private static final String EXPENSES_PUT = "Expenses-Put";
@@ -63,42 +61,27 @@ public class TestJsonRequestCreator
     @Parameters (method = "validActions")
     public void testFetch(String type, Class clazz) throws IOException
     {
-        JsonRequestCreator requestCreatorByName = JsonRequestCreator.getRequestCreatorByName(type);
-        Request request = requestCreatorByName.generateRequest(getJsonString());
+        JsonRequestFactory requestCreatorByName = JsonRequestFactory.getRequestCreatorByName(type);
+        Request request = requestCreatorByName.createRequest(getJsonString());
         assertThat(request).isInstanceOf(clazz);
-    }
-
-    @Test
-    @Parameters (method = "invalidActions")
-    public void testNotAbleToGenerateNotSupportedAction(String invalidAction) throws IOException
-    {
-        expectedException.expect(IllegalArgumentException.class);
-        JsonRequestCreator requestCreatorByName = JsonRequestCreator.getRequestCreatorByName(invalidAction);
-        requestCreatorByName.generateRequest(getJsonString());
     }
 
     @Test
     @Parameters (method = "invalidActions")
     public void testNotAbleToExecuteNotSupportedAction(String invalidAction) throws IOException
     {
-        Request request = mock(Request.class);
-        expectedException.expect(IllegalArgumentException.class);
-        JsonRequestCreator requestCreatorByName = JsonRequestCreator.getRequestCreatorByName(invalidAction);
-        requestCreatorByName.executeRequest(request);
+        JsonRequestFactory requestCreatorByName = JsonRequestFactory.getRequestCreatorByName(invalidAction);
+
+        assertThat(requestCreatorByName).isEqualTo(JsonRequestFactory.UNKNOWN_OPERATION);
+        Request request = requestCreatorByName.createRequest(getJsonString());
+        assertThat(request).isInstanceOf(UnknownOperationRequest.class);
     }
 
     @Test
     public void testUnknownType() throws IOException
     {
-        JsonRequestCreator requestCreatorByName = JsonRequestCreator.getRequestCreatorByName("invalid");
-        Request request = requestCreatorByName.generateRequest(getJsonString());
-
-        JsonObject jsonObject = requestCreatorByName.executeRequest(request);
-
-        assertThat(jsonObject)
-                .as("JsonResponse from unknown operation type should not be null")
-                .isNotNull();
-        assertThat(request).isInstanceOf(UnknownOperationRequest.class);
+        JsonRequestFactory requestCreatorByName = JsonRequestFactory.getRequestCreatorByName("invalid");
+        Request request = requestCreatorByName.createRequest(getJsonString());
     }
 
 

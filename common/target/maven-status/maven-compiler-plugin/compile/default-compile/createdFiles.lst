@@ -1,3 +1,4 @@
+jsonserver/common/json/JsonResponseCreator.class
 jsonserver/common/datatype/Validation/Validation.class
 jsonserver/common/datatype/Temperature.class
 jsonserver/common/view/DeleteRequest.class
@@ -6,16 +7,20 @@ jsonserver/common/Utils/Utilities.class
 jsonserver/common/view/GetRequest.class
 jsonserver/common/Utils/CertificateService.class
 jsonserver/common/view/Temperature/TemperaturePutRequest.class
+jsonserver/common/datatype/ExpensesContainer.class
 jsonserver/common/datatype/ExpenseUser.class
 jsonserver/common/datatype/Threshold.class
 jsonserver/common/datatype/Expenses.class
+jsonserver/common/datatype/UserContainer$Builder.class
+jsonserver/common/Utils/DateUtils.class
 jsonserver/common/view/Expense/ExpensePutRequest.class
 jsonserver/common/datatype/RequestId.class
 jsonserver/common/view/DbView.class
-jsonserver/common/json/JsonResponseHandler.class
 jsonserver/common/datatype/Content.class
 jsonserver/common/datatype/Limit.class
 jsonserver/common/datatype/RequestId$ValidRequestIdEnum.class
+jsonserver/common/datatype/TemperatureContainer.class
+jsonserver/common/datatype/UserContainer$1.class
 jsonserver/common/datatype/Order.class
 jsonserver/common/view/Request.class
 jsonserver/common/datatype/Fetchperiod.class

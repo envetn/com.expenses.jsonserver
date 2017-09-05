@@ -3,10 +3,8 @@ package request.impl;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import jsonserver.common.Utils.Utilities;
 import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.datatype.RequestId;
-import jsonserver.common.json.JsonResponseHandler;
 import jsonserver.common.view.Request;
 
 import java.sql.Date;
@@ -64,6 +62,12 @@ public class UnknownOperationRequest implements Request
     }
 
     @Override
+    public String getRequestType()
+    {
+        return "Unknown";
+    }
+
+    @Override
     public boolean isValid()
     {
         return true;
@@ -73,25 +77,5 @@ public class UnknownOperationRequest implements Request
     public ExpenseUser getUser()
     {
        return myUser;
-    }
-
-    public JsonObject generateResponse()
-    {
-        JsonObject response = JsonResponseHandler.createDefaultResponse(0, this, myAction);
-        response.addProperty("reason", "Unknown operation: " + myAction + " for requestId" + myRequestId);
-        addUserToJson(response);
-
-        return response;
-
-    }
-
-    private void addUserToJson(JsonObject response)
-    {
-        JsonObject user = new JsonObject();
-        user.addProperty("userId", myUser.getUserId());
-        user.addProperty("username", myUser.getUsername());
-        user.addProperty("password", myUser.getPassword());
-
-        response.add("user", user);
     }
 }

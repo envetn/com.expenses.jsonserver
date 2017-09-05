@@ -1,8 +1,6 @@
 package request.impl;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.JsonObject;
-import operations.ReadOperation;
 import jsonserver.common.datatype.RequestId;
 import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.datatype.Limit;

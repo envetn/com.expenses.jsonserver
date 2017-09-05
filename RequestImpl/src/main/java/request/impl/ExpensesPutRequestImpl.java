@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jsonserver.common.datatype.RequestId;
 import jsonserver.common.datatype.Content;
 import jsonserver.common.datatype.ExpenseUser;
+import jsonserver.common.datatype.Validation.ValidationUtil;
 import jsonserver.common.view.Expense.ExpensePutRequest;
 
 import java.sql.Date;
@@ -15,19 +16,19 @@ import java.util.Objects;
  */
 public class ExpensesPutRequestImpl implements ExpensePutRequest//, UserRequest
 {
-    @JsonProperty(value = "id")
+    @JsonProperty (value = "id")
     private final RequestId id;
 
-    @JsonProperty(value = "requestDate")
+    @JsonProperty (value = "requestDate")
     private final Date requestDate;
 
-    @JsonProperty(value = "requestType")
+    @JsonProperty (value = "requestType")
     private final String requestType;
 
-    @JsonProperty(value = "content")
+    @JsonProperty (value = "content")
     private final Content content;
 
-    @JsonProperty(value = "user")
+    @JsonProperty (value = "user")
     private ExpenseUser user;
 
     //Dummy
@@ -62,16 +63,21 @@ public class ExpensesPutRequestImpl implements ExpensePutRequest//, UserRequest
     }
 
     @Override
+    public String getRequestType()
+    {
+        return requestType;
+    }
+
+    @Override
     public Content getContent()
     {
         return content;
     }
 
-
     @Override
     public boolean isValid()
     {
-        return true;
+        return content != null && content.validate();
     }
 
     @Override

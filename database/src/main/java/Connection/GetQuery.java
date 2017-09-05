@@ -30,14 +30,7 @@ public class GetQuery
 
     private GetQuery(QueryBuilder builder) throws SQLException
     {
-        myOrder = new ThreadLocal<Order>()
-        {
-            @Override
-            protected Order initialValue()
-            {
-                return builder.myOrder;
-            }
-        };
+        myOrder = ThreadLocal.withInitial(() -> builder.myOrder);
         myUser = builder.myUser;
         myConnection = builder.myConnect;
         myDatabase = builder.myDatabase;

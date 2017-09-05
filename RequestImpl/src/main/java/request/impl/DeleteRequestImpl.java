@@ -2,8 +2,6 @@ package request.impl;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.JsonObject;
-import operations.RemoveOperation;
 import jsonserver.common.datatype.RequestId;
 import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.view.DeleteRequest;
@@ -69,6 +67,12 @@ public class DeleteRequestImpl implements DeleteRequest//, UserRequest
     public Date getRequestDate()
     {
         return requestDate;
+    }
+
+    @Override
+    public String getRequestType()
+    {
+        return "Delete";
     }
 
     public ExpenseUser getUser()

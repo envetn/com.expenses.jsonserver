@@ -25,12 +25,14 @@ public class ServerRunner
 
     private final int myPort;
     private final boolean myIsSecure;
+    private final boolean myUseCache;
     private boolean myIsRunning;
 
-    public ServerRunner(boolean isSecure, int port)
+    public ServerRunner(boolean isSecure, boolean useCache, int port)
     {
         BasicConfigurator.configure();
 
+        myUseCache = useCache;
         myIsSecure = isSecure;
         myPort = port;
     }
@@ -51,7 +53,7 @@ public class ServerRunner
         logger.info("Registering service...");
         boolean registered = false;
 
-        while (!registered && numberOfTries <= 5)
+        while (! registered && numberOfTries <= 5)
         {
             try
             {
@@ -190,7 +192,7 @@ public class ServerRunner
             {
                 Socket clientSocket = myServer.accept();
 
-                Thread thread = new Thread(new ServerThread(clientSocket));
+                Thread thread = new Thread(new ServerThread(clientSocket, myUseCache));
                 thread.start();
             }
         }

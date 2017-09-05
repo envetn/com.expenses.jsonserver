@@ -3,12 +3,13 @@ package jsonserver.common.datatype;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jsonserver.common.datatype.Validation.Validation;
+import org.apache.log4j.Logger;
 
 import java.sql.Date;
 
 /**
  * Created by olof on 2016-09-18.
- *
+ * <p>
  * Stores data content of Put request
  */
 public class Content implements Validation
@@ -85,15 +86,15 @@ public class Content implements Validation
 
         Content content = (Content) o;
 
-        if (cost != null ? !cost.equals(content.cost) : content.cost != null)
+        if (cost != null ? ! cost.equals(content.cost) : content.cost != null)
         {
             return false;
         }
-        if (comment != null ? !comment.equals(content.comment) : content.comment != null)
+        if (comment != null ? ! comment.equals(content.comment) : content.comment != null)
         {
             return false;
         }
-        if (costType != null ? !costType.equals(content.costType) : content.costType != null)
+        if (costType != null ? ! costType.equals(content.costType) : content.costType != null)
         {
             return false;
         }
@@ -114,6 +115,21 @@ public class Content implements Validation
     @Override
     public boolean validate()
     {
-        return true;
+        return (isTypeValid() && isCostDecimal());
+    }
+
+    private boolean isTypeValid()
+    {
+        return costType != null
+                && (costType.equals("food")
+                || costType.equals("bill")
+                || costType.equals("travel")
+                || costType.equals("other")
+                || costType.equals("food out"));
+    }
+
+    public boolean isCostDecimal()
+    {
+        return cost != null && cost.matches("\\d*");
     }
 }

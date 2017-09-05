@@ -1,7 +1,6 @@
 package jsonserver.common.datatype;
 
 import java.sql.Date;
-import java.util.List;
 
 /**
  * Created by lofie on 2017-05-21.
@@ -13,14 +12,16 @@ public class Expenses
     private final Date myBuyDate;
     private final String myComment;
     private final String myUuid;
+    private boolean myExistsInDb;
 
-    public Expenses(String cost, String costType, Date buyDate, String comment, String uuid)
+    public Expenses(String cost, String costType, Date buyDate, String comment, String uuid, boolean existsInDb)
     {
-        this.myCost = cost;
-        this.myCostType = costType;
-        this.myBuyDate = buyDate;
-        this.myComment = comment;
-        this.myUuid = uuid;
+        myCost = cost;
+        myCostType = costType;
+        myBuyDate = buyDate;
+        myComment = comment;
+        myUuid = uuid;
+        myExistsInDb = existsInDb;
     }
 
     public String getCost()
@@ -46,5 +47,10 @@ public class Expenses
     public String getUuid()
     {
         return myUuid;
+    }
+
+    public boolean existsInDb()
+    {
+        return myExistsInDb;
     }
 }

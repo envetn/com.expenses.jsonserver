@@ -2,7 +2,6 @@ package request.impl;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.google.gson.JsonObject;
 import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.datatype.RequestId;
 import jsonserver.common.datatype.Validation.ValidationUtil;
@@ -70,6 +69,12 @@ public class TemperaturePutRequestImpl implements TemperaturePutRequest
     public Date getRequestDate()
     {
         return requestDate;
+    }
+
+    @Override
+    public String getRequestType()
+    {
+        return myRequestType;
     }
 
     @Override

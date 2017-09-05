@@ -1,6 +1,6 @@
-/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/requestcreator/JsonRequestCreator.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/impl/GetDataRequestImpl.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/impl/DeleteRequestImpl.java
+/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/requestcreator/JsonRequestFactory.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/impl/CreateUserRequest.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/impl/ExpensesPutRequestImpl.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/main/java/request/impl/TemperaturePutRequestImpl.java

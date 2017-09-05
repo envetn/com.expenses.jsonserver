@@ -2,20 +2,18 @@ package server;
 
 import Connection.DatabaseConnection;
 import cache.MemoryCache;
-import jsonserver.common.datatype.RequestId;
 import jsonserver.common.datatype.UserContainer;
-import request.requestcreator.JsonRequestCreator;
-import com.google.common.collect.ImmutableList;
+import jsonserver.common.exception.InvalidRequestException;
+import request.requestcreator.JsonRequestFactory;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import jsonserver.common.Utils.Utilities;
-import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.json.JsonDecoder;
 import org.apache.log4j.Logger;
 
+import java.io.IOException;
 import java.sql.SQLException;
-import java.util.Collections;
 
 import jsonserver.common.view.DbView;
 import jsonserver.common.view.Request;
@@ -23,7 +21,6 @@ import server.internal.CachedRequest;
 
 import static jsonserver.common.Utils.Utilities.REQUEST_ID;
 import static jsonserver.common.Utils.Utilities.REQUEST_TYPE;
-import static jsonserver.common.datatype.RequestId.ValidRequestIdEnum.USER;
 
 /**
  * Created by olof on 2016-07-09.
@@ -36,70 +33,142 @@ public class RequestHandler
     private static final MemoryCache<Integer, CachedRequest> REQUEST_CACHE = new MemoryCache<>();
     private static final MemoryCache<String, UserContainer> USER_CONTAINER_MEMORY_CACHE = new MemoryCache<>();
 
-    private static final Logger logger = Logger.getLogger(RequestHandler.class);
+    private static final Logger LOGGER = Logger.getLogger(RequestHandler.class);
     private static DbView myDatabaseView = null;
+    private final boolean myUseCahce;
 
-    public RequestHandler()
+    public RequestHandler(boolean useCache)
     {
+        myUseCahce = useCache;
         if (myDatabaseView == null)
         {
-            logger.info("Initiating DatabaseConnection");
+            LOGGER.info("Initiating DatabaseConnection");
             myDatabaseView = DatabaseConnection.DatabaseBuilder.initDatabase();
         }
     }
 
 
-    public UserContainer generateRequest(String strRequest)
+    public UserContainer generateRequest(String strRequest) throws IOException
     {
-        CachedRequest cachedRequest = getFromMemoryCache(strRequest);
-        UserContainer userContainer = USER_CONTAINER_MEMORY_CACHE.get("UserName");
-
-        if (userContainer == null)
+        JsonRequestFactory jsonRequestFactory = validateRequestAndGetCreator(strRequest);
+        Request request = jsonRequestFactory.createRequest(strRequest);
+        if (request.isValid())
         {
-            try
-            {
-                JsonRequestCreator jsonRequestCreator = validateRequestAndGetCreator(strRequest);
-                Request request = jsonRequestCreator.generateRequest(strRequest);
-                logger.info("Generated request: " + request);
-                cachedRequest = new CachedRequest(request, jsonRequestCreator);
-                storeInMemoryCache(strRequest, cachedRequest);
+            UserContainer userContainer = getUserContainerFromCache(request);
 
+            if (userContainer == null)
+            {
+                LOGGER.info("Generated request: " + request);
                 //If I keep this one updated. I can use it in the cache. :)
-                userContainer = createUserContainer(cachedRequest);
+                userContainer = createUserContainer(request);
+
+                saveUserContainerToCache(request, userContainer);
 
             }
-            catch (Exception e)
+            else
             {
-                e.printStackTrace();
-                logger.error("Failed to create request: " + e.toString());
-                return null;
+                LOGGER.info("!!!! Cache was used !!!\n Rebuilding container");
+                userContainer = UserContainer.newBuilder()
+                        .setRequest(request)
+                        .setExpenseContainer(userContainer.getExpensesContainer())
+                        .setTemperatureContainer(userContainer.getTemperatureContainer())
+                        .build();
             }
+            return userContainer;
         }
         else
         {
-            logger.info("Request cache was used to fetch: " + cachedRequest);
-        }
-
-
-
-        return userContainer;
-//        return cachedRequest;
-    }
-
-    private UserContainer createUserContainer(CachedRequest cachedRequest)
-    {
-        try
-        {
-            return myDatabaseView.createUserContainer(cachedRequest.getRequest());
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
+            LOGGER.error("Request not valid!\nRequest: " + request);
         }
         return null;
     }
 
-    private JsonRequestCreator validateRequestAndGetCreator(String request)
+    private void saveUserContainerToCache(Request request, UserContainer userContainer)
+    {
+        if (myUseCahce)
+        {
+            USER_CONTAINER_MEMORY_CACHE.put(request.getUser().getUsername(), userContainer);
+        }
+    }
+
+    private UserContainer getUserContainerFromCache(Request request)
+    {
+        if (myUseCahce)
+        {
+            return USER_CONTAINER_MEMORY_CACHE.get(request.getUser().getUsername());
+        }
+        return null;
+    }
+
+    public synchronized JsonObject executeRequest(UserContainer container)
+    {
+        String type = container.getRequest().getRequestType();
+        JsonObject jsonResponse = null;
+        if ("Get".equals(type))
+        {
+            LOGGER.debug("Executing Get request");
+            jsonResponse = myDatabaseView.readFromContainer(container);
+        }
+        else if ("Put".equals(type))
+        {
+            LOGGER.debug("Executing Put request");
+            jsonResponse = myDatabaseView.putIntoContainer(container);
+        }
+        else if ("Delete".equals(type))
+        {
+            LOGGER.debug("Executing Delete request");
+            jsonResponse = myDatabaseView.removeFromContainer(container);
+        }
+        else
+        {
+            throw new InvalidRequestException("Unknown operation type: " + type);
+        }
+
+
+        if (jsonResponse == null)
+        {
+            String error = "request: " + container.getRequest() + "\nIs either invalid or null";
+            LOGGER.error(error);
+            jsonResponse = JsonDecoder.createFailedResponseWithMessage(error, "ExecuteRequest");
+        }
+
+        try
+        {
+            boolean changesSaved = myDatabaseView.saveDatabaseChanges(type, container);
+
+            if (changesSaved)
+            {
+                return jsonResponse;
+            }
+            else
+            {
+                LOGGER.error("Failed to save changes to database");
+                return JsonDecoder.createFailedResponseWithMessage("Failed to save changes to database", "Save database changes");
+            }
+
+        }
+        catch (SQLException e)
+        {
+            LOGGER.error("Exception when trying to save changes to database", e);
+            return JsonDecoder.createFailedResponseWithMessage(e.getMessage(), "Exception when trying to save changes to database");
+        }
+    }
+
+    private UserContainer createUserContainer(Request request)
+    {
+        try
+        {
+            return myDatabaseView.createUserContainer(request);
+        }
+        catch (SQLException e)
+        {
+            e.printStackTrace();
+            LOGGER.error("SqlException when creating userContainer: ", e);
+        }
+        return null;
+    }
+
+    private JsonRequestFactory validateRequestAndGetCreator(String request)
     {
         JsonObject jsonObject = validateJsonAndPrint(request);
 
@@ -112,7 +181,7 @@ public class RequestHandler
         // hm...
         String requestName = requestId + "-" + requestType;
 
-        return JsonRequestCreator.getRequestCreatorByName(requestName);
+        return JsonRequestFactory.getRequestCreatorByName(requestName);
     }
 
     private JsonObject validateJsonAndPrint(String request)
@@ -122,37 +191,9 @@ public class RequestHandler
         JsonObject jsonObject = JsonElement.getAsJsonObject();
 
         String prettyJsonString = Utilities.getPrettyJsonString(jsonObject);
-        logger.info("Received request: " + prettyJsonString);
+        LOGGER.info("Received request: " + prettyJsonString);
         return jsonObject;
     }
-
-
-    public synchronized JsonObject executeRequest(UserContainer container)
-    {
-        String type = container.getRequest().getRequestType();
-        if(type.equals("Get"))
-        {
-            JsonObject jsonResponse = myDatabaseView.readFromContainer(container);
-        }
-
-
-
-
-        JsonObject response;
-        if (validateRequest(generatedRequest.getRequest()))
-        {
-            //TODO handle this request async?
-            response = generatedRequest.execute();
-        }
-        else
-        {
-            logger.error("request: " + generatedRequest + "\nIs either invalid or null");
-            response = JsonDecoder.FAILED_CREATING_MESSAGE;
-        }
-
-        return response;
-    }
-
 
     private CachedRequest getFromMemoryCache(String strRequest)
     {
@@ -164,79 +205,9 @@ public class RequestHandler
     {
         int hashCode = request.hashCode();
         REQUEST_CACHE.put(hashCode, cachedRequest);
-        logger.info("Data was stored in cache..");
+        LOGGER.info("Data was stored in cache..");
     }
 
-    private boolean validateRequest(Request request)
-    {
-        logger.info("Validating request...");
-        boolean isValid = false;
-        if (request != null && request.isValid())
-        {
-            ExpenseUser expenseUser = request.getUser();
-            if (request.getId()
-                    .equals(USER.getId()))
-            {
-                logger.info("Validating user: Should not exist");
-                isValid = !validateUser(expenseUser, false);
-            }
-            else
-            {
-                logger.info("Validating user: Should exist");
-                isValid = validateUser(expenseUser, true);
-            }
-        }
-        return isValid;
-    }
-
-    private boolean validateUser(ExpenseUser expenseUser, boolean useCache)
-    {
-        ImmutableList<ExpenseUser> existingUsers;
-        if (useCache)
-        {
-            existingUsers = myDatabaseView.getCachedUsers();
-        }
-        else
-        {
-            existingUsers = reloadUsers();
-        }
-
-        boolean userFound = existingUsers.stream()
-                .anyMatch(user -> (user.equals(expenseUser)));
-
-        if (userFound)
-        {
-            logger.info("Found matching user: " + expenseUser.getUsername());
-            return true;
-        }
-        else
-        {
-            logger.info("Found no matching users...");
-            if (useCache)
-            {
-                return validateUser(expenseUser, false);
-            }
-        }
-        return false;
-    }
-
-
-    private ImmutableList<ExpenseUser> reloadUsers()
-    {
-        logger.info("Reloading Users...");
-        try
-        {
-            myDatabaseView.openConnection();
-            ImmutableList<ExpenseUser> expenseUsers = myDatabaseView.loadUsers();
-            myDatabaseView.closeConnection();
-            logger.info("Users reloaded successfully...");
-            return expenseUsers;
-        } catch (SQLException e)
-        {
-            logger.info("Failed to load users: " + e);
-        }
-        return ImmutableList.copyOf(Collections.emptyList());
-    }
 
     public void cleanCache()
     {

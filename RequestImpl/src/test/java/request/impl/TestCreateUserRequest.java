@@ -9,7 +9,7 @@ import org.junit.Test;
 
 import java.io.IOException;
 
-import static jsonserver.common.Utils.Utilities.getFirstDayOfMonthInSql;
+import static jsonserver.common.Utils.DateUtils.getFirstDayOfMonthInSql;
 import static jsonserver.common.Utils.Utilities.print;
 import static org.assertj.core.api.Assertions.assertThat;
 

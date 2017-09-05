@@ -6,7 +6,7 @@ import com.google.gson.JsonObject;
 import java.sql.Date;
 
 import static jsonserver.common.Utils.Utilities.DATE_KEY;
-import static jsonserver.common.Utils.Utilities.getTimestamp;
+import static jsonserver.common.Utils.DateUtils.getCurrentTimestamp;
 
 /**
  * Created by Foten on 11/30/2016.
@@ -21,7 +21,7 @@ public abstract class JsonDecoder
     {
         JsonObject jsonResponse = new JsonObject();
         jsonResponse.addProperty("Response", responseInfo);
-        jsonResponse.addProperty("Time", getTimestamp());
+        jsonResponse.addProperty("Time", getCurrentTimestamp());
         jsonResponse.addProperty("where", where );
         jsonResponse.addProperty("Reason", reason);
 
@@ -33,4 +33,10 @@ public abstract class JsonDecoder
         String date = jsonObject.get(DATE_KEY).getAsString();
         return Date.valueOf(date);
     }
+
+    public static JsonObject createFailedResponseWithMessage(String message, String where)
+    {
+        return createJsonHeader("Failed", where, message);
+    }
+
 }

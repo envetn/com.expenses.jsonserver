@@ -2,7 +2,7 @@ package server.internal;
 
 import com.google.gson.JsonObject;
 import jsonserver.common.view.Request;
-import request.requestcreator.JsonRequestCreator;
+import request.requestcreator.JsonRequestFactory;
 
 
 /**
@@ -11,27 +11,19 @@ import request.requestcreator.JsonRequestCreator;
 public class CachedRequest
 {
     Request myRequest;
-    JsonRequestCreator myRequestCreator;
+    JsonRequestFactory myRequestCreator;
 
-    public CachedRequest(Request request, JsonRequestCreator requestCreator)
+    public CachedRequest(Request request, JsonRequestFactory requestCreator)
     {
         myRequest = request;
         myRequestCreator = requestCreator;
     }
 
-    public JsonObject execute()
-    {
-        return myRequestCreator.executeRequest(myRequest);
-    }
 
     public Request getRequest()
     {
         return myRequest;
     }
 
-    public JsonRequestCreator getRequestCreator()
-    {
-        return myRequestCreator;
-    }
 
 }

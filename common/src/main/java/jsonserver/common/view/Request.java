@@ -1,6 +1,5 @@
 package jsonserver.common.view;
 
-import com.google.gson.JsonObject;
 import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.datatype.RequestId;
 

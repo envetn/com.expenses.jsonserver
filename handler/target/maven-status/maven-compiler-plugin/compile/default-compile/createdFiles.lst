@@ -2,3 +2,4 @@ server/ServerThread.class
 server/RequestHandler.class
 server/ServerRunner.class
 StartServer.class
+server/internal/CachedRequest.class

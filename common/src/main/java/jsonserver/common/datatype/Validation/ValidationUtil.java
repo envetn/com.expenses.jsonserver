@@ -24,6 +24,11 @@ public class ValidationUtil
         return isValid;
     }
 
+    public static boolean validDate(String date)
+    {
+        return date.matches("[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]");
+    }
+
     public static boolean isNull(Object ...validate)
     {
         for (Object object : validate)

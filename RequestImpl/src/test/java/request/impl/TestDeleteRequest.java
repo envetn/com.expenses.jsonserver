@@ -1,6 +1,7 @@
 package request.impl;
 
 
+import jsonserver.common.Utils.DateUtils;
 import jsonserver.common.Utils.Utilities;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
@@ -22,7 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
  */
 public class TestDeleteRequest
 {
-    private static final Date DATE =  Utilities.getFirstDayOfMonthInSql();
+    private static final Date DATE =  DateUtils.getFirstDayOfMonthInSql();
     @Test
     public void testDeleteRequest() throws IOException
     {

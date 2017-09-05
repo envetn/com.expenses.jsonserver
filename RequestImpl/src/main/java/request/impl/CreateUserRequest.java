@@ -61,6 +61,12 @@ public class CreateUserRequest implements Request
         return requestDate;
     }
 
+    @Override
+    public String getRequestType()
+    {
+        return requestType;
+    }
+
 
     @Override
     public boolean isValid()

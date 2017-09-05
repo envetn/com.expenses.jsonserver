@@ -118,39 +118,42 @@ public class MemoryCache<K, T>
     @SuppressWarnings("unchecked")
     public void cleanup()
     {
-        LOG.info("Running cleanup...");
-        isClearning = true;
-        long now = System.currentTimeMillis();
-        ArrayList<K> deleteKey;
-
-        synchronized (cacheMaop)
+        if(!cacheMaop.isEmpty())
         {
-            MapIterator itr = cacheMaop.mapIterator();
-            deleteKey = new ArrayList<>((cacheMaop.size() / 2) + +1); //why?
-            K key;
-            CacheObject cacheObject;
+            LOG.info("Running cleanup...");
+            isClearning = true;
+            long now = System.currentTimeMillis();
+            ArrayList<K> deleteKey;
 
-            while (itr.hasNext())
-            {
-                key = (K) itr.next();
-                cacheObject = (CacheObject) itr.getValue();
-
-                if (cacheObject != null && (now > (timeToLive + cacheObject.getLastAccessed())))
-                {
-                    deleteKey.add(key);
-                }
-            }
-        }
-
-        for (K key : deleteKey)
-        {
             synchronized (cacheMaop)
             {
-                cacheMaop.remove(key);
+                MapIterator itr = cacheMaop.mapIterator();
+                deleteKey = new ArrayList<>((cacheMaop.size() / 2) + +1); //why?
+                K key;
+                CacheObject cacheObject;
+
+                while (itr.hasNext())
+                {
+                    key = (K) itr.next();
+                    cacheObject = (CacheObject) itr.getValue();
+
+                    if (cacheObject != null && (now > (timeToLive + cacheObject.getLastAccessed())))
+                    {
+                        deleteKey.add(key);
+                    }
+                }
             }
-            Thread.yield();
+
+            for (K key : deleteKey)
+            {
+                synchronized (cacheMaop)
+                {
+                    cacheMaop.remove(key);
+                }
+                Thread.yield();
+            }
+            isClearning = false;
         }
-        isClearning = false;
     }
 
     @SuppressWarnings("unchecked")

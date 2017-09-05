@@ -1,4 +1,4 @@
-request/requestcreator/TestJsonRequestCreator.class
+request/requestcreator/TestJsonRequestFactory.class
 request/impl/TestJsonPrettyPrinter.class
 request/impl/TestGetDataRequest.class
 request/impl/TestPutDataRequest.class

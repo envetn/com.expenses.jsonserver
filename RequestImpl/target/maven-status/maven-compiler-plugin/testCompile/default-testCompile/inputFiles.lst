@@ -1,7 +1,7 @@
+/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/requestcreator/TestJsonRequestFactory.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/impl/TestCreateTemperaturePutRequest.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/impl/TestCreateUserRequest.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/impl/TestJsonPrettyPrinter.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/impl/TestGetDataRequest.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/impl/TestPutDataRequest.java
-/media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/requestcreator/TestJsonRequestCreator.java
 /media/lofie/Nisse/workarea/Java/ExpensesProject/com.expenses.jsonserverrestructured/RequestImpl/src/test/java/request/impl/TestDeleteRequest.java

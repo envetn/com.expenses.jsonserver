@@ -1,5 +1,6 @@
 package request.impl;
 
+import jsonserver.common.Utils.DateUtils;
 import jsonserver.common.Utils.Utilities;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jsonserver.common.datatype.ExpenseUser;
@@ -23,7 +24,7 @@ public class TestCreateTemperaturePutRequest
     public void testCreateTemperature() throws IOException
     {
         ObjectMapper mapper = new ObjectMapper();
-        Date firstDayOfMonthInSql = Utilities.getFirstDayOfMonthInSql();
+        Date firstDayOfMonthInSql = DateUtils.getFirstDayOfMonthInSql();
         RequestId requestId = new RequestId("Temperature");
         String temperature = "25.2";
         String time = "20:24:20";
@@ -46,7 +47,7 @@ public class TestCreateTemperaturePutRequest
 
     private String getJsonString()
     {
-        Date firstDayOfMonthInSql = Utilities.getFirstDayOfMonthInSql();
+        Date firstDayOfMonthInSql = DateUtils.getFirstDayOfMonthInSql();
         return "{" +
                 " \"id\": {" +
                 "\"requestId\": \"Temperature\"" +
