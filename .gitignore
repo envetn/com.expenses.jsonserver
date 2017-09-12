@@ -2,7 +2,6 @@
 *.bluej
 *.jar
 *.txt
-*.xml
 
 /target/**
 
