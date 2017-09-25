@@ -1,6 +1,5 @@
 package Connection;
 
-import com.google.gson.JsonObject;
 import jsonserver.common.Utils.Utilities;
 import jsonserver.common.datatype.Content;
 import jsonserver.common.datatype.ExpenseUser;
@@ -17,8 +16,6 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Arrays;
 
-import static org.assertj.core.api.Java6Assertions.assertThat;
-import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 

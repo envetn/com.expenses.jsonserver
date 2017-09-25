@@ -12,7 +12,6 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
 import request.impl.*;
 
 import java.io.IOException;
@@ -24,7 +23,7 @@ import static org.mockito.Mockito.mock;
 /**
  * Created by Foten on 4/23/2017.
  */
-@RunWith(JUnitParamsRunner.class)
+@RunWith (JUnitParamsRunner.class)
 public class TestJsonRequestCreator
 {
     private static final String USER_PUT = "User-Put";
@@ -54,8 +53,7 @@ public class TestJsonRequestCreator
     @Parameters
     public Object[] invalidActions()
     {
-        return $(
-                $(TEMPERATURE_DELETE)
+        return $($(TEMPERATURE_DELETE)
         );
     }
 
@@ -101,7 +99,6 @@ public class TestJsonRequestCreator
         assertThat(request).isInstanceOf(UnknownOperationRequest.class);
     }
 
-
     private String getJsonString()
     {
         return "{" +
@@ -112,5 +109,4 @@ public class TestJsonRequestCreator
                 " }" +
                 "}";
     }
-
 }

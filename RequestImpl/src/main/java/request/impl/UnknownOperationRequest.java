@@ -24,7 +24,6 @@ public class UnknownOperationRequest implements Request
     private final ExpenseUser myUser;
     private final String myAction;
 
-
     public UnknownOperationRequest(String jsonObjectAsString)
     {
         JsonParser parser = new JsonParser();
@@ -82,7 +81,6 @@ public class UnknownOperationRequest implements Request
         addUserToJson(response);
 
         return response;
-
     }
 
     private void addUserToJson(JsonObject response)

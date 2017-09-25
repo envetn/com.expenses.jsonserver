@@ -16,7 +16,6 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 /**
  * Created by Foten on 2/5/2017.
  */
-@Ignore
 public class TestCreateTemperaturePutRequest
 {
     @Test
