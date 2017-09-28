@@ -1,9 +1,7 @@
 package jsonserver.common.view;
 
-import com.google.common.collect.ImmutableList;
 import com.google.gson.JsonObject;
-import jsonserver.common.datatype.ExpenseUser;
-import jsonserver.common.datatype.UserContainer;
+import jsonserver.common.containers.UserContainer;
 
 import java.sql.SQLException;
 

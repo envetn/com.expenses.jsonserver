@@ -3,7 +3,7 @@ package server;
 
 import jsonserver.common.Utils.Utilities;
 import com.google.gson.JsonObject;
-import jsonserver.common.datatype.UserContainer;
+import jsonserver.common.containers.UserContainer;
 import jsonserver.common.exception.InvalidRequestException;
 import jsonserver.common.json.JsonDecoder;
 import org.apache.log4j.Logger;

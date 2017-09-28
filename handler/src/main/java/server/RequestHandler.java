@@ -2,7 +2,7 @@ package server;
 
 import Connection.DatabaseConnection;
 import cache.MemoryCache;
-import jsonserver.common.datatype.UserContainer;
+import jsonserver.common.containers.UserContainer;
 import jsonserver.common.exception.InvalidRequestException;
 import request.requestcreator.JsonRequestFactory;
 import com.google.gson.JsonElement;

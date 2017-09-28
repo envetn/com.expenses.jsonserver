@@ -1,8 +1,9 @@
-package jsonserver.common.datatype;
+package jsonserver.common.containers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import jsonserver.common.datatype.*;
 import jsonserver.common.view.DeleteRequest;
 import jsonserver.common.view.Expense.ExpensePutRequest;
 import jsonserver.common.view.GetRequest;

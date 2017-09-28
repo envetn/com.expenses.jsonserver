@@ -1,7 +1,10 @@
-package jsonserver.common.datatype;
+package jsonserver.common.containers;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import jsonserver.common.datatype.Fetchperiod;
+import jsonserver.common.datatype.Limit;
+import jsonserver.common.datatype.Temperature;
 import jsonserver.common.view.GetRequest;
 import jsonserver.common.view.Temperature.TemperaturePutRequest;
 

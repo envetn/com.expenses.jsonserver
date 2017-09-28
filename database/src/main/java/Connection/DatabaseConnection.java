@@ -1,6 +1,9 @@
 package Connection;
 
 import com.google.gson.JsonObject;
+import jsonserver.common.containers.ExpensesContainer;
+import jsonserver.common.containers.TemperatureContainer;
+import jsonserver.common.containers.UserContainer;
 import jsonserver.common.datatype.*;
 import org.apache.log4j.Logger;
 
@@ -21,13 +24,13 @@ import static jsonserver.common.datatype.RequestId.ValidRequestIdEnum.TEMPERATUR
 import static jsonserver.common.datatype.RequestId.ValidRequestIdEnum.USER;
 
 /**
- * Created by olof on 2016-07-09.
+ * Sql database for stuff
  */
 public class DatabaseConnection implements DbView
 {
     //TODO: This Connection.DatabaseConnection could be an OSGI services
     private static final Logger LOGGER = Logger.getLogger(DatabaseConnection.class);
-    public final static Integer SQL_FAILED = 0;
+    private final static Integer SQL_FAILED = 0;
 
     private Connection connect;
     private Statement statement;

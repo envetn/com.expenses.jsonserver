@@ -1,6 +1,5 @@
 package server.internal;
 
-import com.google.gson.JsonObject;
 import jsonserver.common.view.Request;
 import request.requestcreator.JsonRequestFactory;
 
@@ -10,15 +9,14 @@ import request.requestcreator.JsonRequestFactory;
  */
 public class CachedRequest
 {
-    Request myRequest;
-    JsonRequestFactory myRequestCreator;
+    private final Request myRequest;
+    private final JsonRequestFactory myRequestCreator;
 
     public CachedRequest(Request request, JsonRequestFactory requestCreator)
     {
         myRequest = request;
         myRequestCreator = requestCreator;
     }
-
 
     public Request getRequest()
     {

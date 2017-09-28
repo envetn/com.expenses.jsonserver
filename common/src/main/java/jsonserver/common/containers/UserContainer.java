@@ -1,9 +1,8 @@
-package jsonserver.common.datatype;
+package jsonserver.common.containers;
 
 import com.google.gson.JsonObject;
+import jsonserver.common.datatype.ExpenseUser;
 import jsonserver.common.view.Request;
-
-import java.util.List;
 
 import static jsonserver.common.Utils.DateUtils.getCurrentTimestamp;
 
