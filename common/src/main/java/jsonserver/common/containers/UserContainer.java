@@ -2,6 +2,7 @@ package jsonserver.common.containers;
 
 import com.google.gson.JsonObject;
 import jsonserver.common.datatype.ExpenseUser;
+import jsonserver.common.view.GetRequest;
 import jsonserver.common.view.Request;
 
 import static jsonserver.common.Utils.DateUtils.getCurrentTimestamp;
@@ -44,6 +45,26 @@ public class UserContainer
     public boolean isUserUpdated()
     {
         return updateUser;
+    }
+
+    public JsonObject getUser()
+    {
+        ExpenseUser user = myRequest.getUser();
+
+        JsonObject userHeader = createUserHeader("Get-User", "GET");
+        JsonObject userJsonObject= createUserJsonObject(user);
+        JsonObject expensesJsonObject = myExpenesContainer.createExpensesJsonObject((GetRequest) myRequest);
+        JsonObject temperatureJsonObject = myTemperatureContainer.readTemperature((GetRequest) myRequest);
+
+        JsonObject jsonGetData = new JsonObject();
+
+        jsonGetData.add("user", userJsonObject);
+        jsonGetData.add("expenses", expensesJsonObject);
+        jsonGetData.add("temperature", temperatureJsonObject);
+
+        userHeader.add("Get-Data", jsonGetData);
+
+        return userHeader;
     }
 
     public JsonObject updateUser()

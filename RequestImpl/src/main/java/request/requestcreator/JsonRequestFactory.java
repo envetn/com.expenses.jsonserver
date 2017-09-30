@@ -84,8 +84,14 @@ public enum JsonRequestFactory
                 {
                     return OBJECT_MAPPER.readValue(jsonObject, CreateUserRequest.class);
                 }
-
-
+            },
+    USER_GET("User-Get")
+            {
+                @Override
+                public Request createRequest(String jsonObject) throws IOException
+                {
+                    return OBJECT_MAPPER.readValue(jsonObject, GetDataRequestImpl.class);
+                }
             },
 
     UNKNOWN_OPERATION("Unknown-Operation")

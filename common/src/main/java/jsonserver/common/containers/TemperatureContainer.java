@@ -39,7 +39,6 @@ public class TemperatureContainer
 
     public JsonObject putInto(TemperaturePutRequest putRequest)
     {
-
         String requestTime = putRequest.getRequestTime();
         String temperature1 = putRequest.getTemperature();
         Date requestDate = putRequest.getRequestDate();

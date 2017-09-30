@@ -78,19 +78,27 @@ public class DatabaseConnection implements DbView
     @Override
     public JsonObject readFromContainer(UserContainer container)
     {
+        //TODO: should I really split these? They could be one and the same
         Request request = container.getRequest();
         RequestId id = request.getId();
 
+        JsonObject response = null;
         if (id.equals(EXPENSES.getId()))
         {
             ExpensesContainer expensesContainer = container.getExpensesContainer();
-            return expensesContainer.createExpensesJsonObject((GetRequest) request);
+            response =  expensesContainer.createExpensesJsonObject((GetRequest) request);
         }
-        else
+        else if(id.equals(TEMPERATURE.getId()))
         {
             TemperatureContainer temperatureContainer = container.getTemperatureContainer();
-            return temperatureContainer.readTemperature((GetRequest) request);
+            response = temperatureContainer.readTemperature((GetRequest) request);
         }
+        else if(id.equals(USER.getId()))
+        {
+            response = container.getUser();
+        }
+
+        return response;
     }
 
     @Override
@@ -180,12 +188,12 @@ public class DatabaseConnection implements DbView
 
     private int removeUserData(UserContainer container, Request request)
     {
-
         // remove every expenses connected to the user.
 
         // Remove every temperature connected to the user
 
         // Last, remove the user itself
+        LOGGER.error("Removing user data not supported in this release");
 
         return 0;
     }
@@ -431,7 +439,6 @@ public class DatabaseConnection implements DbView
     }
 
 
-    //new
     private List<Expenses> readExpensesValue(Request request) throws SQLException
     {
         String query = "SELECT * FROM test.expenses WHERE username=?";
@@ -461,7 +468,6 @@ public class DatabaseConnection implements DbView
         return listOfExpenses;
     }
 
-    //new
     private List<Threshold> readThresholdValue(Request request) throws SQLException
     {
 
@@ -481,9 +487,9 @@ public class DatabaseConnection implements DbView
             int threshold = resultSet.getInt("threshold");
 
             String type = resultSet.getString("type");
-            int momnth = resultSet.getInt("month");
+            int month = resultSet.getInt("month");
             String username = resultSet.getString("username");
-            thresholds.add(new Threshold(currentValue, threshold, momnth, type, username));
+            thresholds.add(new Threshold(currentValue, threshold, month, type, username));
         }
         return thresholds;
     }
@@ -491,7 +497,6 @@ public class DatabaseConnection implements DbView
     /**
      * Fetch threshold by Username and month.
      */
-
     private int insertTemperatureValues(Temperature temperature) throws SQLException
     {
         if (myDate == null)

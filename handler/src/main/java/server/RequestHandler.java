@@ -30,7 +30,7 @@ public class RequestHandler
     /**
      * Cache for already parsed jsonRequests
      */
-    private static final MemoryCache<Integer, CachedRequest> REQUEST_CACHE = new MemoryCache<>();
+//    private static final MemoryCache<Integer, CachedRequest> REQUEST_CACHE = new MemoryCache<>();
     private static final MemoryCache<String, UserContainer> USER_CONTAINER_MEMORY_CACHE = new MemoryCache<>();
 
     private static final Logger LOGGER = Logger.getLogger(RequestHandler.class);
@@ -103,7 +103,7 @@ public class RequestHandler
     public synchronized JsonObject executeRequest(UserContainer container)
     {
         String type = container.getRequest().getRequestType();
-        JsonObject jsonResponse = null;
+        JsonObject jsonResponse;
         if ("Get".equals(type))
         {
             LOGGER.debug("Executing Get request");
@@ -124,7 +124,11 @@ public class RequestHandler
             throw new InvalidRequestException("Unknown operation type: " + type);
         }
 
+        return handleResponse(container, type, jsonResponse);
+    }
 
+    private JsonObject handleResponse(UserContainer container, String type, JsonObject jsonResponse)
+    {
         if (jsonResponse == null)
         {
             String error = "request: " + container.getRequest() + "\nIs either invalid or null";
@@ -195,23 +199,9 @@ public class RequestHandler
         return jsonObject;
     }
 
-    private CachedRequest getFromMemoryCache(String strRequest)
-    {
-        int hashCode = strRequest.hashCode();
-        return REQUEST_CACHE.get(hashCode);
-    }
-
-    private void storeInMemoryCache(String request, CachedRequest cachedRequest)
-    {
-        int hashCode = request.hashCode();
-        REQUEST_CACHE.put(hashCode, cachedRequest);
-        LOGGER.info("Data was stored in cache..");
-    }
-
-
     public void cleanCache()
     {
-        REQUEST_CACHE.cleanup();
+        USER_CONTAINER_MEMORY_CACHE.cleanup();
     }
 
 }
