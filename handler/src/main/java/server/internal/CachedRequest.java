@@ -24,4 +24,12 @@ public class CachedRequest
     }
 
 
+    @Override
+    public String toString()
+    {
+        return "CachedRequest{" +
+                "myRequest=" + myRequest +
+                "\n myRequestCreator=" + myRequestCreator +
+                '}';
+    }
 }

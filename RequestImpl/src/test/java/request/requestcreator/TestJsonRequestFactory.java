@@ -17,7 +17,6 @@ import java.io.IOException;
 
 import static junitparams.JUnitParamsRunner.$;
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
-import static org.mockito.Mockito.mock;
 
 /**
  * Created by Foten on 4/23/2017.
