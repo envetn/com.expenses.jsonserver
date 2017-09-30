@@ -97,7 +97,7 @@ public enum JsonRequestFactory
     UNKNOWN_OPERATION("Unknown-Operation")
             {
                 @Override
-                public Request createRequest(String jsonObjectAsString) throws IOException
+                public Request createRequest(String jsonObjectAsString)
                 {
                     return new UnknownOperationRequest(jsonObjectAsString);
                 }

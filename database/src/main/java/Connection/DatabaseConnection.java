@@ -1,5 +1,6 @@
 package Connection;
 
+import cache.MemoryCache;
 import com.google.gson.JsonObject;
 import jsonserver.common.containers.ExpensesContainer;
 import jsonserver.common.containers.TemperatureContainer;
@@ -38,41 +39,76 @@ public class DatabaseConnection implements DbView
     private ResultSet resultSet;
     private static Date myDate;
 
+    private static final MemoryCache<Request, UserContainer> USER_CONTAINER_MEMORY_CACHE = new MemoryCache<>();
+    private boolean myUseCahce;
+
     // http://www.vogella.com/tutorials/MySQLJava/article.html
-    public DatabaseConnection() throws ClassNotFoundException
+    public DatabaseConnection(boolean useCahce) throws ClassNotFoundException
     {
         Class.forName("com.mysql.jdbc.Driver");
+        myUseCahce = useCahce;
         //TODO keep track of existing tables in the DB
+    }
+
+    private UserContainer getUserContainerFromCache(Request request)
+    {
+        if (myUseCahce)
+        {
+            return USER_CONTAINER_MEMORY_CACHE.get(request);
+        }
+        return null;
+    }
+
+    private void saveUserContainerToCache(Request request, UserContainer userContainer)
+    {
+        if (myUseCahce)
+        {
+            USER_CONTAINER_MEMORY_CACHE.put(request, userContainer);
+        }
     }
 
     @Override
     public UserContainer createUserContainer(Request request) throws SQLException
     {
-        openConnection();
-        UserContainer userContainer = null;
-        //TODO: What happens if the user is invalid?
-        if (validateUser(request.getUser()))
-        {
-            List<Threshold> thresholds = readThresholdValue(request);
-            List<Expenses> expenses = readExpensesValue(request);
-            List<Temperature> temperature = readTemperatureValue(request);
+        UserContainer userContainer = getUserContainerFromCache(request);
 
-            userContainer = UserContainer.newBuilder()
-                    .setRequest(request)
-                    .setExpenseContainer(new ExpensesContainer(expenses, thresholds))
-                    .setTemperatureContainer(new TemperatureContainer(temperature))
-                    .build();
-        }
-        else if (request.getUser() != null && USER.getId().equals(request.getId()))
+        if (userContainer == null)
         {
+            openConnection();
+            //TODO: What happens if the user is invalid?
+            if (validateUser(request.getUser()))
+            {
+                List<Threshold> thresholds = readThresholdValue(request);
+                List<Expenses> expenses = readExpensesValue(request);
+                List<Temperature> temperature = readTemperatureValue(request);
+
+                userContainer = UserContainer.newBuilder()
+                        .setRequest(request)
+                        .setExpenseContainer(new ExpensesContainer(expenses, thresholds))
+                        .setTemperatureContainer(new TemperatureContainer(temperature))
+                        .build();
+            }
+            else if (request.getUser() != null && USER.getId().equals(request.getId()))
+            {
+                userContainer = UserContainer.newBuilder()
+                        .setRequest(request)
+                        .build();
+            }
+            closeConnection();
+            saveUserContainerToCache(request, userContainer);
+        }
+        else
+        {
+            LOGGER.info("!!!! Cache was used !!!\n Rebuilding container");
             userContainer = UserContainer.newBuilder()
                     .setRequest(request)
+                    .setUpdateUser(userContainer.isUserUpdated())
+                    .setExpenseContainer(userContainer.getExpensesContainer())
+                    .setTemperatureContainer(userContainer.getTemperatureContainer())
                     .build();
         }
-        closeConnection();
 
         return userContainer;
-
     }
 
     @Override
@@ -86,14 +122,14 @@ public class DatabaseConnection implements DbView
         if (id.equals(EXPENSES.getId()))
         {
             ExpensesContainer expensesContainer = container.getExpensesContainer();
-            response =  expensesContainer.createExpensesJsonObject((GetRequest) request);
+            response = expensesContainer.createExpensesJsonObject((GetRequest) request);
         }
-        else if(id.equals(TEMPERATURE.getId()))
+        else if (id.equals(TEMPERATURE.getId()))
         {
             TemperatureContainer temperatureContainer = container.getTemperatureContainer();
             response = temperatureContainer.readTemperature((GetRequest) request);
         }
-        else if(id.equals(USER.getId()))
+        else if (id.equals(USER.getId()))
         {
             response = container.getUser();
         }
@@ -121,6 +157,7 @@ public class DatabaseConnection implements DbView
             TemperatureContainer temperatureContainer = container.getTemperatureContainer();
             return temperatureContainer.putInto((TemperaturePutRequest) request);
         }
+
     }
 
     @Override
@@ -231,6 +268,13 @@ public class DatabaseConnection implements DbView
 //            return temperatureContainer.putInto((TemperaturePutRequest) request);
 //        }
         return null;
+    }
+
+    @Override
+    public void cleanCache()
+    {
+        // Do I really need the cleanup?
+        USER_CONTAINER_MEMORY_CACHE.cleanup();
     }
 
     private boolean validateUser(ExpenseUser user) throws SQLException
@@ -379,7 +423,6 @@ public class DatabaseConnection implements DbView
 
     private int insertExpensesValues(Expenses expenses, Request request) throws SQLException
     {
-
         ExpenseUser user = request.getUser();
         String sql = "INSERT INTO test.expenses (cost, costType, buyDate, comment, uuid, username) VALUES (?,?,?,?,?,?)";
         preparedStatement = connect.prepareStatement(sql);
@@ -563,11 +606,11 @@ public class DatabaseConnection implements DbView
 
     public static class DatabaseBuilder
     {
-        public static DbView initDatabase()
+        public static DbView initDatabase(boolean useCache)
         {
             try
             {
-                return new DatabaseConnection();
+                return new DatabaseConnection(useCache);
             }
             catch (ClassNotFoundException e)
             {

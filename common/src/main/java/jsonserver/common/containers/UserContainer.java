@@ -16,7 +16,7 @@ public class UserContainer
 
     private final ExpensesContainer myExpenesContainer;
     private final TemperatureContainer myTemperatureContainer;
-    private boolean updateUser = false;
+    private boolean myUpdateUser = false;
 
     private UserContainer(Builder builder)
     {
@@ -24,6 +24,7 @@ public class UserContainer
 
         myTemperatureContainer = builder.myTemperatureContainer;
         myExpenesContainer = builder.myExpenesContainer;
+        myUpdateUser = builder.myUpdateUser;
     }
 
     public Request getRequest()
@@ -44,7 +45,7 @@ public class UserContainer
 
     public boolean isUserUpdated()
     {
-        return updateUser;
+        return myUpdateUser;
     }
 
     public JsonObject getUser()
@@ -69,7 +70,12 @@ public class UserContainer
 
     public JsonObject updateUser()
     {
-        updateUser = true;
+        if(myUpdateUser)
+        {
+            // User already updated
+            return null;
+        }
+        myUpdateUser = true;
         ExpenseUser user = myRequest.getUser();
 
         JsonObject userHeader = createUserHeader("Put-User", "PUT");
@@ -81,7 +87,7 @@ public class UserContainer
 
     public JsonObject removeUser()
     {
-        updateUser = true;
+        myUpdateUser = true;
         ExpenseUser user = myRequest.getUser();
 
         JsonObject userHeader = createUserHeader("Delete-User", "DELETE");
@@ -130,6 +136,7 @@ public class UserContainer
 
         private ExpensesContainer myExpenesContainer;
         private TemperatureContainer myTemperatureContainer;
+        private boolean myUpdateUser;
 
         public Builder setRequest(Request request)
         {
@@ -146,6 +153,12 @@ public class UserContainer
         public Builder setTemperatureContainer(TemperatureContainer temperatureContainer)
         {
             myTemperatureContainer = temperatureContainer;
+            return this;
+        }
+
+        public Builder setUpdateUser(boolean shouldUpdate)
+        {
+            myUpdateUser = shouldUpdate;
             return this;
         }
 

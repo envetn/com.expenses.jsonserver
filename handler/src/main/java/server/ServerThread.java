@@ -131,7 +131,7 @@ public class ServerThread implements Runnable
             }
 
         }
-        catch (IOException | InvalidRequestException e)
+        catch (Exception e)
         {
             logger.error("Failed to create request: " + e.toString());
             response = JsonDecoder.createFailedResponseWithMessage(e.getMessage(), "JsonServer.ServerThread.handleReceivedMessage");

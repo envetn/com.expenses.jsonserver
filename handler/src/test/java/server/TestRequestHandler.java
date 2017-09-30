@@ -1,45 +1,70 @@
 package server;
 
 import jsonserver.common.containers.UserContainer;
-import org.junit.Ignore;
+import jsonserver.common.view.DbView;
+import jsonserver.common.view.Expense.ExpensePutRequest;
+import jsonserver.common.view.GetRequest;
+import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
-import server.internal.CachedRequest;
+import org.junit.rules.ExpectedException;
 
-import java.io.IOException;
+import java.sql.SQLException;
 
 import static org.assertj.core.api.AssertionsForInterfaceTypes.assertThat;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.*;
 
 /**
- * Created by lofie on 2017-09-16.
+ * Test class for {@link RequestHandler}
  */
 public class TestRequestHandler
 {
-    private static final String VALID_REQUEST_GET_2020 = "{\"id\":{\"requestId\":\"Expenses\"},\"requestType\":\"Put\",\"requestDate\":\"2020-09-16T13:53:00.933Z\",\"user\":{\"userId\":\"remove_me2\",\"username\":\"remove_me2\",\"password\":\"remove_me2\"},\"content\":{\"cost\":\"200\",\"costType\":\"bill\",\"comment\":\"A comment\",\"buyDate\":\"2017-09-16T13:53:00.933Z\",\"uuid\":\"idToBeRemoved\"}}";
-    private static final String VALID_REQUEST_GET = "{\"id\":{\"requestId\":\"Expenses\"},\"requestType\":\"Put\",\"requestDate\":\"2017-09-16T13:53:00.933Z\",\"user\":{\"userId\":\"remove_me2\",\"username\":\"remove_me2\",\"password\":\"remove_me2\"},\"content\":{\"cost\":\"200\",\"costType\":\"bill\",\"comment\":\"A comment\",\"buyDate\":\"2017-09-16T13:53:00.933Z\",\"uuid\":\"idToBeRemoved\"}}";
+    private static final String VALID_REQUEST_PUT = "{\"id\":{\"requestId\":\"Expenses\"},\"requestType\":\"Put\",\"requestDate\":\"2017-09-16T13:53:00.933Z\",\"user\":{\"userId\":\"remove_me2\",\"username\":\"remove_me2\",\"password\":\"remove_me2\"},\"content\":{\"cost\":\"200\",\"costType\":\"bill\",\"comment\":\"A comment\",\"buyDate\":\"2017-09-16T13:53:00.933Z\",\"uuid\":\"idToBeRemoved\"}}";
+    private static final String VALID_REQUEST_GET = "{\"id\":{\"requestId\":\"Expenses\"},\"requestType\":\"Get\",\"requestDate\":\"2017-09-30\",\"order\":{\"orderBy\":\"buyDate\",\"isAscending\":true},\"limit\":{\"fetchperiod\":{\"period\":\"timePeriod\",\"periodToFetch\":\"All\",\"hasPeriod\":true,\"timeStart\":\"1970-01-01\",\"timeEnd\":\"9999-12-31\"}},\"user\":{\"userId\":\"remove_me4\",\"username\":\"remove_me4\",\"password\":\"remove_me4\"}}";
 
-    @Test
-    @Ignore
-    public void testCreateTwiceWithIdentical() throws IOException
+    private UserContainer userContainerForPut = mock(UserContainer.class);
+    private UserContainer userContainerForGet = mock(UserContainer.class);
+    private RequestHandler myRequestHandler;
+    private DbView myDbView;
+
+    @Rule
+    public ExpectedException myExpectedException = ExpectedException.none();
+
+    @Before
+    public void init()
     {
-        RequestHandler requestHandler = new RequestHandler(true);
-
-        UserContainer cachedContainer = requestHandler.generateRequest(VALID_REQUEST_GET);
-
-        UserContainer secondCachedContainer = requestHandler.generateRequest(VALID_REQUEST_GET);
-
-        assertThat(cachedContainer).isSameAs(secondCachedContainer);
+        myDbView = mock(DbView.class);
+        myRequestHandler = new RequestHandler(myDbView);
     }
 
     @Test
-    @Ignore
-    public void testTwoDifferentTimestampOnRequestDiffers() throws IOException
+    public void testCreatePutRequest() throws Exception
     {
-        RequestHandler requestHandler = new RequestHandler(true);
+        when(myDbView.createUserContainer(any(ExpensePutRequest.class))).thenReturn(userContainerForPut);
+        UserContainer userContainer = myRequestHandler.generateRequest(VALID_REQUEST_PUT);
+        assertThat(userContainer).isEqualTo(userContainerForPut);
 
-        UserContainer cachedContainer= requestHandler.generateRequest(VALID_REQUEST_GET);
+        verify(myDbView).createUserContainer(any(ExpensePutRequest.class));
+    }
 
-        UserContainer secondCachedContainer = requestHandler.generateRequest(VALID_REQUEST_GET_2020);
+    @Test
+    public void testCreateGetRequest() throws Exception
+    {
+        when(myDbView.createUserContainer(any(GetRequest.class))).thenReturn(userContainerForGet);
+        UserContainer cachedContainer = myRequestHandler.generateRequest(VALID_REQUEST_GET);
+        assertThat(cachedContainer).isEqualTo(userContainerForGet);
+        verify(myDbView).createUserContainer(any(GetRequest.class));
+    }
 
-        assertThat(cachedContainer).isNotSameAs(secondCachedContainer);
+    @Test
+    public void testCreateGetWithException() throws Exception
+    {
+        myExpectedException.expect(IllegalStateException.class);
+        myExpectedException.expectMessage("Unable to create UserContainer");
+        when(myDbView.createUserContainer(any(GetRequest.class))).thenThrow(new SQLException());
+
+        UserContainer cachedContainer = myRequestHandler.generateRequest(VALID_REQUEST_GET);
+        assertThat(cachedContainer).isNull();
     }
 }

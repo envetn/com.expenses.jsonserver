@@ -19,4 +19,6 @@ public interface DbView
     boolean saveDatabaseChanges(String type, UserContainer container) throws SQLException;
 
     JsonObject removeFromContainer(UserContainer container);
+
+    void cleanCache();
 }

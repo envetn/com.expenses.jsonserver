@@ -11,6 +11,7 @@ import jsonserver.common.view.GetRequest;
 import java.io.IOException;
 import java.sql.Date;
 import java.text.SimpleDateFormat;
+import java.util.Objects;
 
 /**
  * Created by olof on 2016-09-15.
@@ -130,8 +131,12 @@ public class GetDataRequestImpl implements GetRequest//, UserRequest
 
         GetDataRequestImpl that = (GetDataRequestImpl) o;
 
-        return id != null ? id.equals(that.id) : that.id == null && !(requestDate != null && that.getRequestDate() != null && f.format(requestDate)
-                .equals(f.format(that.getRequestDate()))) && (requestType != null ? requestType.equals(that.requestType) : that.requestType == null && (order != null ? order.equals(that.order) : that.order == null && (limit != null ? limit.equals(that.limit) : that.limit == null)));
+        return Objects.equals(id, that.id) &&
+                Objects.equals(requestDate, that.requestDate) &&
+                Objects.equals(requestType, that.requestType) &&
+                Objects.equals(order, that.order) &&
+                Objects.equals(limit, that.limit) &&
+                Objects.equals(user, that.user);
 
     }
 
@@ -143,14 +148,15 @@ public class GetDataRequestImpl implements GetRequest//, UserRequest
         result = 31 * result + (requestType != null ? requestType.hashCode() : 0);
         result = 31 * result + (order != null ? order.hashCode() : 0);
         result = 31 * result + (limit != null ? limit.hashCode() : 0);
+        result = 31 * result + (user != null ? user.hashCode() : 0);
         return result;
     }
 
     private void throwIfNull(ExpenseUser user) throws IOException
     {
-        if (user == null || user.getUserId()
-                .isEmpty() || user.getPassword()
-                .isEmpty())
+        if (user == null
+                || user.getUserId().isEmpty()
+                || user.getPassword().isEmpty())
         {
             throw new IOException("Argument User can not be null");
         }

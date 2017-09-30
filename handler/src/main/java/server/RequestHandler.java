@@ -27,75 +27,39 @@ import static jsonserver.common.Utils.Utilities.REQUEST_TYPE;
  */
 public class RequestHandler
 {
-    /**
-     * Cache for already parsed jsonRequests
-     */
-//    private static final MemoryCache<Integer, CachedRequest> REQUEST_CACHE = new MemoryCache<>();
-    private static final MemoryCache<String, UserContainer> USER_CONTAINER_MEMORY_CACHE = new MemoryCache<>();
 
     private static final Logger LOGGER = Logger.getLogger(RequestHandler.class);
     private static DbView myDatabaseView = null;
-    private final boolean myUseCahce;
 
     public RequestHandler(boolean useCache)
     {
-        myUseCahce = useCache;
         if (myDatabaseView == null)
         {
             LOGGER.info("Initiating DatabaseConnection");
-            myDatabaseView = DatabaseConnection.DatabaseBuilder.initDatabase();
+            myDatabaseView = DatabaseConnection.DatabaseBuilder.initDatabase(useCache);
         }
     }
 
+    /**
+     * For testing only
+     */
+    protected RequestHandler(DbView dbView)
+    {
+        myDatabaseView = dbView;
+    }
 
-    public UserContainer generateRequest(String strRequest) throws IOException
+    public UserContainer generateRequest(String strRequest) throws Exception
     {
         JsonRequestFactory jsonRequestFactory = validateRequestAndGetCreator(strRequest);
         Request request = jsonRequestFactory.createRequest(strRequest);
         if (request.isValid())
         {
-            UserContainer userContainer = getUserContainerFromCache(request);
-
-            if (userContainer == null)
-            {
-                LOGGER.info("Generated request: " + request);
-                //If I keep this one updated. I can use it in the cache. :)
-                userContainer = createUserContainer(request);
-
-                saveUserContainerToCache(request, userContainer);
-
-            }
-            else
-            {
-                LOGGER.info("!!!! Cache was used !!!\n Rebuilding container");
-                userContainer = UserContainer.newBuilder()
-                        .setRequest(request)
-                        .setExpenseContainer(userContainer.getExpensesContainer())
-                        .setTemperatureContainer(userContainer.getTemperatureContainer())
-                        .build();
-            }
-            return userContainer;
+            LOGGER.info("Generated request: " + request);
+            return createUserContainer(request);
         }
         else
         {
             LOGGER.error("Request not valid!\nRequest: " + request);
-        }
-        return null;
-    }
-
-    private void saveUserContainerToCache(Request request, UserContainer userContainer)
-    {
-        if (myUseCahce)
-        {
-            USER_CONTAINER_MEMORY_CACHE.put(request.getUser().getUsername(), userContainer);
-        }
-    }
-
-    private UserContainer getUserContainerFromCache(Request request)
-    {
-        if (myUseCahce)
-        {
-            return USER_CONTAINER_MEMORY_CACHE.get(request.getUser().getUsername());
         }
         return null;
     }
@@ -166,10 +130,9 @@ public class RequestHandler
         }
         catch (SQLException e)
         {
-            e.printStackTrace();
             LOGGER.error("SqlException when creating userContainer: ", e);
+            throw new IllegalStateException("Unable to create UserContainer", e);
         }
-        return null;
     }
 
     private JsonRequestFactory validateRequestAndGetCreator(String request)
@@ -201,7 +164,10 @@ public class RequestHandler
 
     public void cleanCache()
     {
-        USER_CONTAINER_MEMORY_CACHE.cleanup();
+        if(myDatabaseView != null)
+        {
+            myDatabaseView.cleanCache();
+        }
     }
 
 }
