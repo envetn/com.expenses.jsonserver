@@ -3,6 +3,8 @@ package jsonserver.common.datatype;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jsonserver.common.datatype.Validation.Validation;
 
+import java.util.Objects;
+
 /**
  * Created by olof on 2016-10-03.
  */
@@ -59,7 +61,10 @@ public class ExpenseUser implements Validation
 
         ExpenseUser that = (ExpenseUser) o;
 
-        return username.equals(that.username) && password.equals(that.password);
+        return Objects.equals(username, that.username) &&
+                Objects.equals(password, that.password) &&
+                Objects.equals(userId, that.userId);
+
     }
 
     @Override

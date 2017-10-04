@@ -18,33 +18,33 @@ import java.util.Objects;
  */
 public class GetDataRequestImpl implements GetRequest//, UserRequest
 {
-    @JsonProperty(value = "id")
+    @JsonProperty (value = "id")
     private final RequestId id;
 
-    @JsonProperty(value = "requestDate")
+    @JsonProperty (value = "requestDate")
     private final Date requestDate;
 
-    @JsonProperty(value = "requestType")
+    @JsonProperty (value = "requestType")
     private final String requestType;
 
-    @JsonProperty(value = "order")
+    @JsonProperty (value = "order")
     private final Order order;
 
-    @JsonProperty(value = "limit")
+    @JsonProperty (value = "limit")
     private final Limit limit;
 
-    @JsonProperty(value = "user", required = true)
+    @JsonProperty (value = "user", required = true)
     private ExpenseUser user;
 
     public GetDataRequestImpl(RequestId id, String requestType, Order order, Date requestDate, Limit limit, ExpenseUser user) throws IOException
     {
+        Objects.requireNonNull(user, "User is not allowed to be null");
+
         this.id = id;
         this.requestDate = requestDate;
         this.requestType = requestType;
         this.order = order;
         this.limit = limit;
-
-        throwIfNull(user);
         this.user = user;
     }
 
@@ -119,7 +119,6 @@ public class GetDataRequestImpl implements GetRequest//, UserRequest
     @Override
     public boolean equals(Object o)
     {
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd");
         if (this == o)
         {
             return true;
@@ -137,7 +136,6 @@ public class GetDataRequestImpl implements GetRequest//, UserRequest
                 Objects.equals(order, that.order) &&
                 Objects.equals(limit, that.limit) &&
                 Objects.equals(user, that.user);
-
     }
 
     @Override
