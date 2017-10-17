@@ -119,15 +119,25 @@ public class ServerThread implements Runnable
         {
             UserContainer container = myRequestHandler.generateRequest(messageFromClient);
             logger.info("Executing request towards database");
-            if (container != null)
+            if (container != null && container.getErrorMessage() == null)
             {
                 response = myRequestHandler.executeRequest(container);
             }
             else
             {
-                String errorMessage = "Not Enable to create container for request: " + messageFromClient;
-                logger.info(errorMessage);
-                response = JsonDecoder.createFailedResponseWithMessage(errorMessage, "JsonServer.ServerThread.handleReceivedMessage");
+                StringBuilder builder = new StringBuilder()
+                        .append("Not Enable to create container for request: ")
+                        .append(messageFromClient);
+
+                if(container != null  && container.getErrorMessage() != null)
+                {
+                    builder.append("\nUserContainer error message:")
+                            .append(container.getErrorMessage());
+                }
+
+                String s = builder.toString();
+                logger.info(s);
+                response = JsonDecoder.createFailedResponseWithMessage(s, "JsonServer.ServerThread.handleReceivedMessage");
             }
 
         }

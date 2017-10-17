@@ -42,7 +42,6 @@ public class CreateUserRequest implements Request
         this.user = user;
     }
 
-
     @Override
     public ExpenseUser getUser()
     {

@@ -1,7 +1,10 @@
 package Connection.internal;
 
+import com.sun.org.apache.regexp.internal.RE;
 import jsonserver.common.containers.UserContainer;
 import jsonserver.common.datatype.ExpenseUser;
+import jsonserver.common.datatype.RequestId;
+import jsonserver.common.datatype.RequestId.ValidRequestIdEnum;
 import jsonserver.common.view.Request;
 import org.apache.log4j.Logger;
 
@@ -23,9 +26,20 @@ public class UserConnection
         myConnection = connection;
     }
 
-    public boolean doesUserExist(ExpenseUser user) throws SQLException
+    public boolean doesUserExist(Request request) throws SQLException
     {
-        return getUser(user).next();
+        return getUser(request.getUser()).next();
+    }
+
+    public boolean isUserAllowedToExist(Request request)
+    {
+        boolean isRequestPut = request.getRequestType().equals("Put");
+        boolean isRequestTypeUser = request.getId().equals(ValidRequestIdEnum.USER.getId());
+
+        boolean isUserAllowedToExist =  !(isRequestPut && isRequestTypeUser);
+
+        LOGGER.info("Is user allowed to exist: " + isUserAllowedToExist );
+        return isUserAllowedToExist;
     }
 
     public int createUser(UserContainer container, Request createUserRequest) throws SQLException

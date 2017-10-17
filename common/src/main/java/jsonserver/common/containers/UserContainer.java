@@ -17,6 +17,7 @@ public class UserContainer
     private final ExpensesContainer myExpenesContainer;
     private final TemperatureContainer myTemperatureContainer;
     private boolean myUpdateUser = false;
+    private String myErrorMessage;
 
     private UserContainer(Builder builder)
     {
@@ -25,6 +26,7 @@ public class UserContainer
         myTemperatureContainer = builder.myTemperatureContainer;
         myExpenesContainer = builder.myExpenesContainer;
         myUpdateUser = builder.myUpdateUser;
+        myErrorMessage = builder.myErrorMessage;
     }
 
     public Request getRequest()
@@ -32,6 +34,10 @@ public class UserContainer
         return myRequest;
     }
 
+    public String getErrorMessage()
+    {
+        return myErrorMessage;
+    }
 
     public TemperatureContainer getTemperatureContainer()
     {
@@ -134,6 +140,7 @@ public class UserContainer
 
         private Request myRequest;
 
+        private String myErrorMessage;
         private ExpensesContainer myExpenesContainer;
         private TemperatureContainer myTemperatureContainer;
         private boolean myUpdateUser;
@@ -159,6 +166,12 @@ public class UserContainer
         public Builder setUpdateUser(boolean shouldUpdate)
         {
             myUpdateUser = shouldUpdate;
+            return this;
+        }
+
+        public Builder setErrorMessage(String errorMessage)
+        {
+            myErrorMessage = errorMessage;
             return this;
         }
 

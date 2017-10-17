@@ -54,27 +54,38 @@ public class DatabaseConnection implements DbView
     public UserContainer createUserContainer(Request request) throws SQLException
     {
         UserContainer userContainer = getUserContainerFromCache(request);
-
         if (userContainer == null)
         {
+            LOGGER.info("User container was not found in cache, creating it now..");
             openConnection();
             //TODO: What happens if the user is invalid?
             UserConnection userConnection = new UserConnection(connect);
-            if (userConnection.doesUserExist(request.getUser()))
+            if (userConnection.doesUserExist(request))
             {
-                ExpensesConnection expensesConnection = new ExpensesConnection(connect);
-                TemperatureConnection temperatureConnection = new TemperatureConnection(connect, myDate, statement);
+                if(userConnection.isUserAllowedToExist(request))
+                {
+                    ExpensesConnection expensesConnection = new ExpensesConnection(connect);
+                    TemperatureConnection temperatureConnection = new TemperatureConnection(connect, myDate, statement);
 
+                    List<Threshold> thresholds = expensesConnection.readThresholdValue(request);
+                    List<Expenses> expenses = expensesConnection.readExpensesValue(request);
+                    List<Temperature> temperature = temperatureConnection.readTemperatureValue(request);
 
-                List<Threshold> thresholds = expensesConnection.readThresholdValue(request);
-                List<Expenses> expenses = expensesConnection.readExpensesValue(request);
-                List<Temperature> temperature = temperatureConnection.readTemperatureValue(request);
+                    userContainer = UserContainer.newBuilder()
+                            .setRequest(request)
+                            .setExpenseContainer(new ExpensesContainer(expenses, thresholds))
+                            .setTemperatureContainer(new TemperatureContainer(temperature))
+                            .build();
+                }
+                else
+                {
+                    LOGGER.info("User was not allowed to exists. Doing nothing...");
+                    userContainer = UserContainer.newBuilder()
+                            .setRequest(request)
+                            .setErrorMessage("User already exists and is not allowed to exist for this request")
+                            .build();
+                }
 
-                userContainer = UserContainer.newBuilder()
-                        .setRequest(request)
-                        .setExpenseContainer(new ExpensesContainer(expenses, thresholds))
-                        .setTemperatureContainer(new TemperatureContainer(temperature))
-                        .build();
             }
             else if (request.getUser() != null && USER.getId().equals(request.getId()))
             {
